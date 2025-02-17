@@ -20,6 +20,17 @@ builder.Services.AddScoped<ITodoService, TodoService>();
 builder.Services.AddScoped<IUserRepository, UserRepository>();
 builder.Services.AddScoped<IAuthService, AuthService>();
 
+builder.Services.AddCors(options =>
+{
+    options.AddDefaultPolicy(
+        builder =>
+        {
+            builder.AllowAnyMethod()
+                   .AllowAnyHeader()
+                   .WithOrigins("https://localhost:7261")
+                   .AllowCredentials();
+        }); 
+});
 
 builder.Services.AddAuthentication(o =>
     {
@@ -56,6 +67,7 @@ if (app.Environment.IsDevelopment())
 }
 
 app.UseHttpsRedirection();
+app.UseCors();
 
 app.UseAuthentication();
 app.UseAuthorization();

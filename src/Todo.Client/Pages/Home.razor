@@ -1,0 +1,104 @@
+﻿@page "/"
+@attribute [Authorize]
+
+@code {
+
+	private Todo newTask = new Todo();
+
+	class Todo
+	{
+		public string Task { get; set; }
+		public bool IsCompleted { get; set; }
+	}
+
+
+
+	private List<Todo> tasks = new List<Todo>()
+	{
+		new Todo { Task = "Learn Blazor", IsCompleted = false },
+		new Todo { Task = "Build a Todo App", IsCompleted = false },
+		new Todo { Task = "Deploy to Azure", IsCompleted = false }
+	};
+
+	private void AddTask()
+	{
+		if (!string.IsNullOrWhiteSpace(newTask.Task))
+		{
+			tasks.Add(newTask);
+			newTask = new Todo();
+			StateHasChanged();
+		}
+	}
+
+	private void DeleteTask(Todo task)
+	{
+		tasks.Remove(task);
+		StateHasChanged();
+
+	}
+
+	private void CompleteTask(Todo task)
+	{
+		task.IsCompleted = true;
+		StateHasChanged();
+	}
+}
+
+<PageTitle>Todo App</PageTitle>
+
+
+<div class="container">
+	<header>
+		<div class="logo">
+			<svg xmlns="http://www.w3.org/2000/svg" width="32" height="32" viewBox="0 0 24 24" fill="none"
+				 stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="icon">
+				<path d="M14.5 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V7.5L14.5 2z" />
+				<polyline points="14 2 14 8 20 8" />
+			</svg>
+			<h1>Hi, Ahmed</h1>
+		</div>
+	</header>
+
+	<div class="add-todo">
+		<input type="text" placeholder="Add a new task..." @bind="newTask.Task">
+		<button class="add-btn" @onclick="AddTask">
+			<svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none"
+				 stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+				<circle cx="12" cy="12" r="10" />
+				<path d="M8 12h8" />
+				<path d="M12 8v8" />
+			</svg>
+			Add Task
+		</button>
+	</div>
+
+	<div class="todo-list">
+
+		@if (tasks.Any())
+		{
+			@foreach (var task in tasks)
+			{
+				<div class="todo-item @(task.IsCompleted? "completed":"")">
+					<button class="check-btn" @onclick="()  =>CompleteTask(task)">
+						<svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none"
+							 stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+							<path d="M12 22c5.523 0 10-4.477 10-10S17.523 2 12 2 2 6.477 2 12s4.477 10 10 10z" />
+							<path d="m9 12 2 2 4-4" />
+						</svg>
+					</button>
+
+					<span class="todo-text ">@task.Task</span>
+
+					<button class="delete-btn" @onclick="() => DeleteTask(task)">
+						<svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none"
+							 stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+							<circle cx="12" cy="12" r="10" />
+							<path d="m15 9-6 6" />
+							<path d="m9 9 6 6" />
+						</svg>
+					</button>
+				</div>
+			}
+		}
+	</div>
+</div>

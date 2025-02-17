@@ -1,0 +1,105 @@
+﻿@page "/register"
+@inject NavigationManager Navigation
+@inject IAccountManagment AccountMangment
+
+
+
+
+<div class="login-container">
+	<div class="login-form">
+		<h2 class="form-title">Create Account</h2>
+		<p class="form-subtitle">Join us on your amazing journey</p>
+
+		<EditForm Model="registerModel" OnValidSubmit="Submit">
+			
+			<div class="mb-4">
+				<label for="First Name" class="form-label">First Name</label>
+				<InputText @bind-Value="registerModel!.FirstName" class="form-control" id="fname" name="fname" placeholder="ahmed"
+						   required /> />
+				<ValidationMessage For="() => registerModel.FirstName" />
+			</div>
+
+			<div class="mb-4">
+				<label for="Last Name" class="form-label">Last Name</label>
+				<InputText @bind-Value="registerModel!.LastName" class="form-control" id="lname" name="lname" placeholder="barq-allayl"
+						   required /> />
+				<ValidationMessage For="() => registerModel.LastName" />
+			</div>
+
+
+			<div class="mb-4">
+				<label for="email" class="form-label">EMAIL ADDRESS</label>
+				<InputText @bind-Value="registerModel!.Email" class="form-control" id="email" name="email" placeholder="name@example.com"
+						   required /> />
+				<ValidationMessage For="() => registerModel.Email" />
+			</div>
+
+			<div class="mb-4">
+				<label for="password" class="form-label">PASSWORD</label>
+				<InputText @bind-Value="registerModel!.Password" type="password" class="form-control" id="password" name="password"
+						   placeholder="Create a password" required minlength="6" />
+				<ValidationMessage For="() => registerModel.Password" class="text-danger" />
+			</div>
+
+			<div class="mb-4">
+				<label for="confirmPassword" class="form-label">CONFIRM PASSWORD</label>
+				<InputText @bind-Value="registerModel!.ConfirmPassword" type="password" class="form-control" id="confirmPassword" name="confirmPassword"
+						   placeholder="Confirm your password" required minlength="8" />
+				<ValidationMessage For="() => registerModel.ConfirmPassword" class="text-danger" />
+			</div>
+
+			<div class="mb-4">
+				<div class="form-check">
+					<input type="checkbox" class="form-check-input" id="terms" name="terms" required />
+					<label class="form-check-label" for="terms">
+						I agree to the Terms of Service and Privacy Policy
+					</label>
+				</div>
+			</div>
+
+ 			
+
+			<button type="submit" class="btn btn-primary w-100 mb-4">
+				Create Account
+			</button>
+
+			<p class="text-center signup-text">
+				Already have an account?
+				<NavLink href="/login" class="signup-link">Sign In</NavLink>
+			</p> 
+		</EditForm>
+	</div>
+</div>
+
+
+
+
+
+@code {
+
+	[SupplyParameterFromForm]
+	RegisterModel? registerModel { get; set; }
+
+	string[] Errors { get; set; } = [];
+	bool loading;
+
+	protected override void OnInitialized() => registerModel ??= new();
+
+				private async Task Submit()
+				{
+					loading = true;
+					var result = await AccountMangment.RegisterAsync(registerModel.Email,registerModel.Password);
+
+					if (result.Succeede)
+					{
+						Navigation.NavigateTo("/");
+					}
+					else
+					{
+						Errors = result.ErrorList;
+					}
+					loading = false;
+
+				}
+
+}
