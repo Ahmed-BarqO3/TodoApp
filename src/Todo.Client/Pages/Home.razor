@@ -1,50 +1,57 @@
 ﻿@page "/"
+@inject  TodoClient Client
+@inject UserClient UserClient
+
 @attribute [Authorize]
 
 @code {
 
-	private Todo newTask = new Todo();
+	string? NameOfUser;
+	private TodoItem? newTask = new TodoItem();
+	private List<TodoItem>? tasks = new();
 
-	class Todo
+
+	protected override async Task OnInitializedAsync()
 	{
-		public string Task { get; set; }
-		public bool IsCompleted { get; set; }
+		tasks = await Client.GetTodosAsync();
+		var user = await UserClient.GetUserAsync();
+		NameOfUser = user.FirstName;
 	}
 
 
-
-	private List<Todo> tasks = new List<Todo>()
+	private async Task AddTask()
 	{
-		new Todo { Task = "Learn Blazor", IsCompleted = false },
-		new Todo { Task = "Build a Todo App", IsCompleted = false },
-		new Todo { Task = "Deploy to Azure", IsCompleted = false }
-	};
-
-	private void AddTask()
-	{
-		if (!string.IsNullOrWhiteSpace(newTask.Task))
+		if (!string.IsNullOrWhiteSpace(newTask.Title))
 		{
-			tasks.Add(newTask);
-			newTask = new Todo();
+			var createdTodo = await Client.AddTodoAsync(newTask.Title);
+			tasks!.Add(createdTodo!);
+			newTask.Title = string.Empty;
 			StateHasChanged();
 		}
 	}
 
-	private void DeleteTask(Todo task)
+	private async Task DeleteTask(TodoItem task)
 	{
-		tasks.Remove(task);
-		StateHasChanged();
-
+		if (await Client.DeleteTodoAsync(task.Id))
+		{
+			tasks!.Remove(task);
+			StateHasChanged();
+		}
 	}
 
-	private void CompleteTask(Todo task)
+	private async Task CompleteTask(TodoItem task)
 	{
-		task.IsCompleted = true;
-		StateHasChanged();
+		if (!task.IsComplete)
+		{
+			await Client.DoneTodoAsync(task);
+			tasks!.Find(t => t.Id == task.Id)!.IsComplete = true;
+			StateHasChanged();
+		}
 	}
 }
 
 <PageTitle>Todo App</PageTitle>
+
 
 
 <div class="container">
@@ -55,13 +62,19 @@
 				<path d="M14.5 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V7.5L14.5 2z" />
 				<polyline points="14 2 14 8 20 8" />
 			</svg>
-			<h1>Hi, Ahmed</h1>
+			<h1>Hi, @NameOfUser</h1>
 		</div>
 	</header>
 
+	<EditForm Model="newTask" OnValidSubmit="AddTask">
+		<DataAnnotationsValidator />
 	<div class="add-todo">
-		<input type="text" placeholder="Add a new task..." @bind="newTask.Task">
-		<button class="add-btn" @onclick="AddTask">
+
+		<InputText @bind-Value="newTask!.Title" class="input-title" id="title" name="title" type="text" placeholder="Add a new task..." required />
+
+       <ValidationMessage For="@(() => newTask.Title)" />
+        
+		<button type="submit" class="add-btn" >
 			<svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none"
 				 stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
 				<circle cx="12" cy="12" r="10" />
@@ -71,14 +84,14 @@
 			Add Task
 		</button>
 	</div>
-
+	</EditForm>
+	
 	<div class="todo-list">
-
 		@if (tasks.Any())
 		{
 			@foreach (var task in tasks)
 			{
-				<div class="todo-item @(task.IsCompleted? "completed":"")">
+				<div class="todo-item @(task.IsComplete? "completed":"")">
 					<button class="check-btn" @onclick="()  =>CompleteTask(task)">
 						<svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none"
 							 stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
@@ -87,7 +100,10 @@
 						</svg>
 					</button>
 
-					<span class="todo-text ">@task.Task</span>
+					<div class="todo-content">
+						<span class="todo-text ">@task.Title</span>
+						<span class="todo-date">@task.CreateAt.ToLocalTime().ToLongDateString()</span>
+					</div>
 
 					<button class="delete-btn" @onclick="() => DeleteTask(task)">
 						<svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none"
@@ -101,4 +117,5 @@
 			}
 		}
 	</div>
+	
 </div>

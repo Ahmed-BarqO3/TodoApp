@@ -3,6 +3,6 @@
 public interface IAccountManagment
 {
     Task<AuthResult> LoingAsync(LoginModel loginModel);
-    Task<AuthResult> RegisterAsync(string email, string password);
+    Task<AuthResult> RegisterAsync(RegisterModel registerModel);
     Task LogoutAsync();
 }

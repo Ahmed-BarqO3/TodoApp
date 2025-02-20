@@ -8,7 +8,7 @@ public class Todo
     public bool IsComplete { get; set; }
     public  DateTime CreateAt { get; private set; } = DateTime.Now;
     public User User { get; set; }
-    public int UserId { get; set; }
+    public string UserId { get; set; }
 }
 
 

@@ -1,8 +1,9 @@
+using System.Security.Claims;
 using Mapster;
 using Microsoft.AspNetCore.Http.HttpResults;
 using Todo.Api.Filters;
-using Todo.Api.Mapping;
 using Todo.Api.Requsets;
+using Todo.Api.Response;
 using Todo.Api.Service;
 
 namespace Todo.Api.Endpoints;
@@ -11,7 +12,7 @@ public static class TodosEndpints
 {
     public static void MapTodoEndpoints(this IEndpointRouteBuilder app )
     {
-        var group = app.MapGroup("api/v1/todos")
+        var group = app.MapGroup("api/v1/todo")
             .RequireAuthorization();
 
         group.MapPost("", CreateTodo)
@@ -24,13 +25,18 @@ public static class TodosEndpints
         
     }
     
-     static async Task<Results<Ok<TodoDto>,BadRequest>> CreateTodo(CreateTodoRequset requset ,ITodoService _todoService)
+     static async Task<Results<Ok<TodoResponse>,BadRequest>> CreateTodo(ClaimsPrincipal claims,CreateTodoRequset requset ,ITodoService _todoService)
     {
-        var result = await _todoService.AddAsync(requset.Adapt<Models.Todo>());
-        return result  is not null? TypedResults.Ok(result.Adapt<TodoDto>()) : TypedResults.BadRequest();
+        
+        var userid = claims.FindFirst(x=>x.Type == ClaimTypes.NameIdentifier).Value;
+        var itme = requset.Adapt<Models.Todo>();
+        itme.UserId = userid;
+       
+        var result = await _todoService.AddAsync(itme);
+        return result  is not null? TypedResults.Ok(result.Adapt<TodoResponse>()) : TypedResults.BadRequest();
     }
     
-     static async Task<Results<Ok<TodoDto>,NotFound>> GetTodo( int id,ITodoService todoService)
+     static async Task<Results<Ok<TodoResponse>,NotFound>> GetTodo( int id,ITodoService todoService)
     {
         var result = await todoService.GetAsync(id);
         return result is not null? TypedResults.Ok(result) : TypedResults.NotFound();
@@ -48,9 +54,11 @@ public static class TodosEndpints
         return result ? TypedResults.Ok() : TypedResults.BadRequest();
     }
     
-     static async Task<IResult> GetTodos(ITodoService todoService)
+     static async Task<IResult> GetTodos(ClaimsPrincipal calims,ITodoService todoService)
     {
-        var result = await todoService.GetAllAsync();
+        var userid = calims.FindFirst(x=>x.Type == ClaimTypes.NameIdentifier).Value;
+        
+        var result = await todoService.GetAllAsync(userid);
         return TypedResults.Ok(result);
     }
 }

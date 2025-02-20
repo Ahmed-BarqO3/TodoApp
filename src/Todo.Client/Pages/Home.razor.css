@@ -239,7 +239,7 @@ header {
     margin-bottom: 2rem;
 }
 
-input {
+.input-title {
     flex: 1;
     padding: 0.75rem 1rem;
     background-color: #1f2937;
@@ -250,7 +250,7 @@ input {
     transition: all 0.3s ease;
 }
 
-    input:focus {
+    .input-title:focus {
         outline: none;
         border-color: #7c3aed;
         box-shadow: 0 0 0 2px rgba(124, 58, 237, 0.2);
@@ -275,6 +275,16 @@ input {
         background-color: #6d28d9;
     }
 
+.todo-content {
+    flex: 1;
+    min-width: 0;
+    display: flex;
+    flex-direction: column;
+    gap: 0.25rem;
+}
+
+
+
 /* Todo List Styles */
 .todo-list {
     display: flex;
@@ -298,15 +308,40 @@ input {
         transform: translateY(-1px);
     }
 
-    .todo-item.completed .todo-text {
-        color: #6b7280;
-        text-decoration: line-through;
-    }
+.todo-content {
+    flex: 1;
+    min-width: 0;
+    display: flex;
+    flex-direction: column;
+    gap: 0.25rem;
+}
 
-    .todo-item.completed .check-btn {
-        color: #10b981;
-        border-color: #10b981;
-    }
+.todo-text {
+    font-size: 1.125rem;
+    color: #f3f4f6;
+    word-break: break-word;
+}
+
+.todo-date {
+    font-size: 0.75rem;
+    color: #9ca3af;
+    font-style: italic;
+}
+
+.todo-item.completed .todo-text {
+    color: #6b7280;
+    text-decoration: line-through;
+}
+
+.todo-item.completed .todo-date {
+    color: #6b7280;
+}
+
+.todo-item.completed .check-btn {
+    color: #10b981;
+    border-color: #10b981;
+}
+
 
 .check-btn,
 .delete-btn {
@@ -470,7 +505,7 @@ input {
         background: linear-gradient(180deg, #1a1f2c 0%, #0d1117 100%);
     }
 
-    input {
+    .input-title {
         background-color: #1a1f2c;
     }
 

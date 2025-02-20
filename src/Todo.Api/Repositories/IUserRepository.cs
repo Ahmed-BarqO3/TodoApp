@@ -6,5 +6,6 @@ public interface IUserRepository
     Task<User?> GetByEmail(string email);
     Task<bool> IsEmailExist(string email);
     Task<bool> UpdateAsync(User user);
-    Task<bool> DeleteAsync(int  Id);
+    Task<bool> DeleteAsync(string  Id);
+    Task<User?> FindbyId(string id);
 }

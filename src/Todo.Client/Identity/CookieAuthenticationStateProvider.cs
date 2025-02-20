@@ -83,23 +83,26 @@ public class CookieAuthenticationStateProvider(IHttpClientFactory httpClientFact
         };
     }
 
+    
+
     public async Task LogoutAsync()
     {
-        var emptyContent = new StringContent(JsonSerializer.Serialize(new { }), Encoding.UTF8, "application/json");
-        await _httpClient.PostAsync("auth/logout", emptyContent);
+        await _httpClient.PostAsync("api/v1/user/logout", content: null);
         NotifyAuthenticationStateChanged(GetAuthenticationStateAsync());
     }
 
-    public async Task<AuthResult> RegisterAsync(string email, string password)
+    public async Task<AuthResult> RegisterAsync(RegisterModel registerModel)
     {
         var errors = new List<string>();
 
         try
         {
-            var Result = await _httpClient.PostAsJsonAsync("register", new
+            var Result = await _httpClient.PostAsJsonAsync("api/v1/user/register", new
             {
-                email,
-                password,
+                registerModel.FirstName,
+                registerModel.LastName,
+                registerModel.Email,
+                registerModel.Password,
             });
             if (Result.IsSuccessStatusCode)
             {

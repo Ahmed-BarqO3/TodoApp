@@ -30,10 +30,10 @@ public class UserRepository : IUserRepository
           await _context.Users.ExecuteUpdateAsync(p=> p.SetProperty(x=>x.FirstName, user.FirstName)
             .SetProperty(x=>x.LastName, user.LastName)
             .SetProperty(x=>x.Email, user.Email)
-            .SetProperty(x=>x.Password, user.Password)) > 0;
+            .SetProperty(x=>x.PasswordHash, user.PasswordHash)) > 0;
         
     
-    public async Task<bool> DeleteAsync(int id)
+    public async Task<bool> DeleteAsync(string id)
     {
         var user = await _context.Users.FindAsync( id);
         if (user is null)
@@ -41,4 +41,9 @@ public class UserRepository : IUserRepository
         _context.Users.Remove(user);
         return await _context.SaveChangesAsync() > 0;
     }
+
+    public async Task<User?> FindbyId(string id) =>
+   
+        await _context.Users.FindAsync(id);
+    
 }

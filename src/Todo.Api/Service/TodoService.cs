@@ -1,6 +1,6 @@
 using Mapster;
-using Todo.Api.Mapping;
 using Todo.Api.Repositories;
+using Todo.Api.Response;
 
 namespace Todo.Api.Service;
 
@@ -18,17 +18,17 @@ public class TodoService : ITodoService
         await _todoRepository.AddAsync(todo);
 
 
-    public async Task<TodoDto?> GetAsync(int id)
+    public async Task<TodoResponse?> GetAsync(int id)
     {
        var result = await  _todoRepository.GetByIdAsync(id);
-       return result.Adapt<TodoDto>();
+       return result.Adapt<TodoResponse>();
     }
 
 
-    public async Task<List<TodoDto>> GetAllAsync()
+    public async Task<List<TodoResponse>> GetAllAsync(string userid)
     {
-       var restult = await  _todoRepository.GetAllAsync();
-       return restult.Adapt<List<TodoDto>>();
+       var restult = await  _todoRepository.GetAllAsync(userid);
+       return restult.Adapt<List<TodoResponse>>();
     }
 
     public async Task<bool> UpdateAsync(Models.Todo todo) =>
@@ -41,16 +41,8 @@ public class TodoService : ITodoService
         await _todoRepository.DeleteAsync(id);
 
 
-    public async Task<bool> DoneAsync(int id)
-    {
-        var todo = await _todoRepository.GetByIdAsync(id);
-        if (todo is null)
-        {
-            return false;
-        }
-        
-        todo.IsComplete = true;
-        return await _todoRepository.UpdateAsync(todo);
-    }
+    public async Task<bool> DoneAsync(int id) =>
+ 
+        await _todoRepository.DoneAsync(id) ? true : false;   
     
 }

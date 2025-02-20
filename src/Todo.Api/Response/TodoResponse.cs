@@ -1,6 +1,6 @@
-namespace Todo.Api.Mapping;
+namespace Todo.Api.Response;
 
-public class TodoDto
+public class TodoResponse
 {
     public int Id { get; set; }
     public string Title { get; set; } 

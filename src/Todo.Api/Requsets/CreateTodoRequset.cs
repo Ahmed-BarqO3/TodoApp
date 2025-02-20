@@ -6,8 +6,6 @@ namespace Todo.Api.Requsets;
 public record CreateTodoRequset
 {
     public string Title { get; set; } = string.Empty;
-    public bool IsComplete { get; private set; } = false;
-    public int UserId { get; set; }
 }
 
 public class CreateTodoRequsetValidator : AbstractValidator<CreateTodoRequset>
@@ -15,6 +13,5 @@ public class CreateTodoRequsetValidator : AbstractValidator<CreateTodoRequset>
     public CreateTodoRequsetValidator()
     {
         RuleFor(x => x.Title).NotEmpty().MaximumLength(70);
-        RuleFor(x => x.UserId).GreaterThanOrEqualTo(1).NotNull();
     }
 }

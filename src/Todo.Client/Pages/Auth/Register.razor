@@ -4,47 +4,45 @@
 
 
 
-
 <div class="login-container">
 	<div class="login-form">
 		<h2 class="form-title">Create Account</h2>
 		<p class="form-subtitle">Join us on your amazing journey</p>
 
 		<EditForm Model="registerModel" OnValidSubmit="Submit">
-			
+			<DataAnnotationsValidator />
+
 			<div class="mb-4">
 				<label for="First Name" class="form-label">First Name</label>
-				<InputText @bind-Value="registerModel!.FirstName" class="form-control" id="fname" name="fname" placeholder="ahmed"
-						   required /> />
+				<InputText @bind-Value="registerModel!.FirstName" @oninput="Trim" class="form-control" id="fname" name="fname" placeholder="ahmed"
+				/>
 				<ValidationMessage For="() => registerModel.FirstName" />
 			</div>
 
 			<div class="mb-4">
 				<label for="Last Name" class="form-label">Last Name</label>
-				<InputText @bind-Value="registerModel!.LastName" class="form-control" id="lname" name="lname" placeholder="barq-allayl"
-						   required /> />
+				<InputText @bind-Value="registerModel!.LastName" @oninput="Trim" class="form-control" id="lname" name="lname" placeholder="barq-allayl" />
 				<ValidationMessage For="() => registerModel.LastName" />
 			</div>
 
 
 			<div class="mb-4">
 				<label for="email" class="form-label">EMAIL ADDRESS</label>
-				<InputText @bind-Value="registerModel!.Email" class="form-control" id="email" name="email" placeholder="name@example.com"
-						   required /> />
+				<InputText @bind-Value="registerModel!.Email" @oninput="Trim" class="form-control" id="email" name="email" placeholder="name@example.com" />
 				<ValidationMessage For="() => registerModel.Email" />
 			</div>
 
 			<div class="mb-4">
 				<label for="password" class="form-label">PASSWORD</label>
 				<InputText @bind-Value="registerModel!.Password" type="password" class="form-control" id="password" name="password"
-						   placeholder="Create a password" required minlength="6" />
+				placeholder="Create a password"  />
 				<ValidationMessage For="() => registerModel.Password" class="text-danger" />
 			</div>
 
 			<div class="mb-4">
 				<label for="confirmPassword" class="form-label">CONFIRM PASSWORD</label>
 				<InputText @bind-Value="registerModel!.ConfirmPassword" type="password" class="form-control" id="confirmPassword" name="confirmPassword"
-						   placeholder="Confirm your password" required minlength="8" />
+				placeholder="Confirm your password"  />
 				<ValidationMessage For="() => registerModel.ConfirmPassword" class="text-danger" />
 			</div>
 
@@ -57,11 +55,21 @@
 				</div>
 			</div>
 
- 			
-
 			<button type="submit" class="btn btn-primary w-100 mb-4">
 				Create Account
 			</button>
+
+			@if (Errors.Any())
+			{
+			<div class="alert-danger" role="alert">
+				@foreach (var error in Errors)
+				{
+					<ul>
+						<li>@error</li>
+					</ul>
+				}
+			</div>
+			}
 
 			<p class="text-center signup-text">
 				Already have an account?
@@ -85,21 +93,28 @@
 
 	protected override void OnInitialized() => registerModel ??= new();
 
-				private async Task Submit()
-				{
-					loading = true;
-					var result = await AccountMangment.RegisterAsync(registerModel.Email,registerModel.Password);
+	private async Task Submit()
+	{
+		loading = true;
+		var result = await AccountMangment.RegisterAsync(registerModel!);
 
-					if (result.Succeede)
-					{
-						Navigation.NavigateTo("/");
-					}
-					else
-					{
-						Errors = result.ErrorList;
-					}
-					loading = false;
+		if (result.Succeede)
+		{
+			Navigation.NavigateTo("/");
 
-				}
+		}
+		else
+		{
+			Errors = result.ErrorList;
+		}
+		loading = false;
 
+	}
+
+	private void Trim()
+	{
+		registerModel.FirstName = registerModel.FirstName.Trim();
+		registerModel.LastName = registerModel.LastName.Trim();
+		registerModel.Email = registerModel.Email.Trim();
+	}
 }
