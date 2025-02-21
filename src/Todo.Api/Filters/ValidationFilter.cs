@@ -4,7 +4,7 @@ namespace Todo.Api.Filters;
 
 public class ValidationFilter<TRequset> : IEndpointFilter
 {
-    IValidator<TRequset> _validator;
+    readonly IValidator<TRequset> _validator;
 
     public ValidationFilter(IValidator<TRequset> validator)
     {
@@ -24,7 +24,6 @@ public class ValidationFilter<TRequset> : IEndpointFilter
        return  await next(context);
     }
 }
-
 
 public static class ValidationFilterExtensions
 {

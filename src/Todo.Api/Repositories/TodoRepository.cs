@@ -4,7 +4,7 @@ namespace Todo.Api.Repositories;
 
 public class TodoRepository : ITodoRepository
 {
-    AppDbContext _context;
+    readonly AppDbContext _context;
 
     public TodoRepository(AppDbContext context)
     {

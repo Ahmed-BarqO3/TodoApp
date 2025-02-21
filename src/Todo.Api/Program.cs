@@ -4,6 +4,7 @@ using Todo.Api.Repositories;
 using Todo.Api.Service;
 using FluentValidation;
 using Scalar.AspNetCore;
+using Microsoft.AspNetCore.Diagnostics;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -31,7 +32,6 @@ builder.Services.AddCors(options =>
 });
 
 
-
 builder.Services.AddAuthorization();
 builder.Services.AddAuthentication();
 
@@ -51,8 +51,27 @@ if (app.Environment.IsDevelopment())
 }
 
 app.UseHttpsRedirection();
-app.UseCors();
 
+app.UseExceptionHandler(app =>
+{
+    app.Run(async context =>
+    {
+        context.Response.StatusCode = 500;
+        context.Response.ContentType = "application/json";
+        var contextFeature = context.Features.Get<IExceptionHandlerFeature>();
+        if (contextFeature is not null)
+        {
+            await context.Response.WriteAsJsonAsync(new 
+            {
+                StatusCode = context.Response.StatusCode,
+                Message = "Internal Server Error"
+            });
+        }
+    });
+});
+
+
+app.UseCors();
 app.UseAuthentication();
 app.UseAuthorization();
 

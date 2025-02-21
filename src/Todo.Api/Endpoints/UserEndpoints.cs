@@ -26,7 +26,6 @@ public static class UserEndpoints
 
     }
     
-    
     private static async Task<Results<Ok,BadRequest>> RegisterAsync(CreateRegistreationRequset request, IUserService userService)
     {
         var user = await userService.RegisterAsync(request);
@@ -52,7 +51,4 @@ public static class UserEndpoints
         return user is not null ? TypedResults.Ok(user) : TypedResults.BadRequest();
 
     }
-
-
-
 }
