@@ -1,29 +1,29 @@
 ﻿@page "/"
-@inject  TodoClient Client
-@inject UserClient UserClient
+@inject TodoClient TodoClient
 
 @attribute [Authorize]
 
 @code {
 
-	string? NameOfUser;
+	[CascadingParameter]
+	string? NameOfUser { set; get; }
+
 	private TodoItem? newTask = new TodoItem();
 	private List<TodoItem>? tasks = new();
 
 
-	protected override async Task OnInitializedAsync()
-	{
-		tasks = await Client.GetTodosAsync();
-		var user = await UserClient.GetUserAsync();
-		NameOfUser = user.FirstName;
-	}
+	protected override async Task OnInitializedAsync() =>
+	
+		tasks = await TodoClient.GetTodosAsync();
+	
+	
 
 
 	private async Task AddTask()
 	{
 		if (!string.IsNullOrWhiteSpace(newTask.Title))
 		{
-			var createdTodo = await Client.AddTodoAsync(newTask.Title);
+			var createdTodo = await TodoClient.AddTodoAsync(newTask.Title);
 			tasks!.Add(createdTodo!);
 			newTask.Title = string.Empty;
 			StateHasChanged();
@@ -32,7 +32,7 @@
 
 	private async Task DeleteTask(TodoItem task)
 	{
-		if (await Client.DeleteTodoAsync(task.Id))
+		if (await TodoClient.DeleteTodoAsync(task.Id))
 		{
 			tasks!.Remove(task);
 			StateHasChanged();
@@ -43,7 +43,7 @@
 	{
 		if (!task.IsComplete)
 		{
-			await Client.DoneTodoAsync(task);
+			await TodoClient.DoneTodoAsync(task);
 			tasks!.Find(t => t.Id == task.Id)!.IsComplete = true;
 			StateHasChanged();
 		}
@@ -51,8 +51,6 @@
 }
 
 <PageTitle>Todo App</PageTitle>
-
-
 
 <div class="container">
 	<header>
