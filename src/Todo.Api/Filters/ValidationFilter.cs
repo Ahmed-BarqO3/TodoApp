@@ -25,10 +25,4 @@ public class ValidationFilter<TRequset> : IEndpointFilter
     }
 }
 
-public static class ValidationFilterExtensions
-{
-    public static void WithRequsetValidation<TFilter>(this RouteHandlerBuilder builder)
-    
-        => builder.AddEndpointFilter<ValidationFilter<TFilter>>().ProducesValidationProblem();
-    
-}
+

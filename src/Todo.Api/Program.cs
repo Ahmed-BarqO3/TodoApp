@@ -5,6 +5,7 @@ using Todo.Api.Service;
 using FluentValidation;
 using Scalar.AspNetCore;
 using Microsoft.AspNetCore.Diagnostics;
+using Todo.Api.Extensions;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -47,7 +48,8 @@ if (app.Environment.IsDevelopment())
 {
     app.MapOpenApi();
     app.MapScalarApiReference();
-    
+    //app.ApplyMigrations();
+
 }
 
 app.UseHttpsRedirection();
