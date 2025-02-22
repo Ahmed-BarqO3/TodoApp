@@ -9,4 +9,6 @@ public interface IUserService
     Task LogoutAsync();
 
     Task<UserResponse> GetCurrentUserAsync(string userid);
+
+    Task<User?> UpdateAsync(string userid,UpdateUserRequest request);
 }

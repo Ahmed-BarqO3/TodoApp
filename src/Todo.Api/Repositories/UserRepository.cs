@@ -27,7 +27,8 @@ public class UserRepository : IUserRepository
 
     public async Task<bool> UpdateAsync(User user) =>
     
-          await _context.Users.ExecuteUpdateAsync(p=> p.SetProperty(x=>x.FirstName, user.FirstName)
+          await _context.Users.Where(x=>x.Id == user.Id)
+        .ExecuteUpdateAsync(p=> p.SetProperty(x=>x.FirstName, user.FirstName)
             .SetProperty(x=>x.LastName, user.LastName)
             .SetProperty(x=>x.Email, user.Email)
             .SetProperty(x=>x.PasswordHash, user.PasswordHash)) > 0;

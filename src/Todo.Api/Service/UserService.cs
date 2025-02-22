@@ -53,4 +53,22 @@ public class UserService : IUserService
         return false;
     }
 
+    public async Task<User?> UpdateAsync(string userid,UpdateUserRequest request)
+    {
+
+       var user = await _userRepository.FindbyId(userid);
+
+        user.FirstName = request.FirstName;
+        user.LastName = request.LastName;
+
+        if (!string.IsNullOrEmpty(request.PasswordHash))
+        {
+            user.PasswordHash = _userManager.PasswordHasher.HashPassword(user, request.PasswordHash!);
+            await _userManager.UpdateSecurityStampAsync(user);
+        }
+
+            var result = await _userManager.UpdateAsync(user);
+      
+        return result.Succeeded ? user : null;
+    }
 }

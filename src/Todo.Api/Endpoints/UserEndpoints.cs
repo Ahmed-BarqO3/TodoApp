@@ -1,4 +1,5 @@
 using System.Security.Claims;
+using Mapster;
 using Microsoft.AspNetCore.Http.HttpResults;
 using Todo.Api.Filters;
 using Todo.Api.Requsets;
@@ -21,8 +22,22 @@ public static class UserEndpoints
           .RequireAuthorization();
 
         group.MapGet("me", GetCurrentUser)
-          .RequireAuthorization();  
+          .RequireAuthorization();
 
+        group.MapPut("update", UpdateAsync)
+          .WithRequsetValidation<UpdateUserRequest>();
+
+
+    }
+
+    private static async Task<Results<Ok<UserResponse>,BadRequest>> UpdateAsync(ClaimsPrincipal claims,UpdateUserRequest request,IUserService userService)
+    {
+        var userid = claims.FindFirst(x => x.Type == ClaimTypes.NameIdentifier).Value;
+
+        var result = await userService.UpdateAsync(userid, request);
+        
+
+        return result is not null ? TypedResults.Ok(result.Adapt<UserResponse>()): TypedResults.BadRequest();
 
     }
     
