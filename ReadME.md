@@ -6,7 +6,6 @@ The app includes features such as task creation, deletion, and marking tasks as 
 
 **Key Features:**
 - Task creation, deletion, and marking as done
-- Responsive design for cross-device compatibility
 - Secure access token management using cookies
 
 **Technologies Used:**
@@ -16,3 +15,5 @@ The app includes features such as task creation, deletion, and marking tasks as 
 - Blazor
 - ASP.NET Identity for authentication and authorization
 - Minimal API for backend services
+
+![Alt text](image.png)
