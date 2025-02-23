@@ -29,7 +29,7 @@ builder.Services.AddCors(options =>
                    .AllowAnyHeader()
                    .WithOrigins(builder.Configuration.GetValue<string>("WebHost"))
                    .AllowCredentials();
-        }); 
+        });
 });
 
 
@@ -42,13 +42,15 @@ builder.Services.AddIdentityApiEndpoints<User>()
 builder.Services.AddOpenApi();
 builder.Services.AddValidatorsFromAssemblyContaining<Program>();
 
+
+
 var app = builder.Build();
 
 if (app.Environment.IsDevelopment())
 {
     app.MapOpenApi();
     app.MapScalarApiReference();
-    //app.ApplyMigrations();
+    app.ApplyMigrations();
 
 }
 
@@ -63,7 +65,7 @@ app.UseExceptionHandler(app =>
         var contextFeature = context.Features.Get<IExceptionHandlerFeature>();
         if (contextFeature is not null)
         {
-            await context.Response.WriteAsJsonAsync(new 
+            await context.Response.WriteAsJsonAsync(new
             {
                 StatusCode = context.Response.StatusCode,
                 Message = "Internal Server Error"

@@ -1,0 +1,47 @@
+services:
+  todo.api:
+    image: ${DOCKER_REGISTRY-}todoapi
+    build:
+      context: ./src/Todo.Api
+      dockerfile: Dockerfile
+    ports:
+      - "5000:5000"
+      - "5001:5001"
+    depends_on:
+      - sqlserver
+    environment:
+      - ASPNETCORE_ENVIRONMENT=Development
+    networks:
+      - "todonetwork"
+    restart: on-failure
+
+  todo.client:
+    image: ${DOCKER_REGISTRY-}todoclient
+    build:
+      context: ./src/Todo.Client
+      dockerfile: Dockerfile
+    ports:
+      - "8080:8080"
+      - "8081:8081"
+    depends_on:
+      - todo.api
+    networks:
+      - "todonetwork"
+    restart: on-failure
+
+  sqlserver:
+    image: mcr.microsoft.com/mssql/server:2022-latest
+    environment:
+      MSSQL_SA_PASSWORD: "password12345!"
+      MSSQL_DB: "Todo"
+      ACCEPT_EULA: "Y"
+    ports:
+      - "1433"
+    volumes:
+      - sqlvolume:/var/opt/mssql
+    networks:
+      - "todonetwork"
+networks:
+  todonetwork:
+volumes:
+  sqlvolume:
